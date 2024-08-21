@@ -1,0 +1,110 @@
+<style>
+  .feedback-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+  }
+  .feedback-form h2 {
+    margin-bottom: 20px;
+    color: #333333;
+  }
+  .feedback-form input[type="text"],
+  .feedback-form input[type="email"],
+  .feedback-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  .feedback-form textarea {
+    resize: vertical;
+    height: 120px;
+  }
+  .feedback-form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #5a67d8;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .feedback-form button[type="submit"]:hover {
+    background-color: #434190;
+  }
+  .main-div {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+    align-items: center; /* Center horizontally */
+  }
+  .title-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .title-div span {
+    font-size: 40px;
+    font-weight: 900;
+    font-style: normal;
+  }
+  .title-div span:nth-of-type(2) {
+    font-weight: 500;
+  }
+  .mess-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .mess-main-div {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: lightgreen;
+    border-radius: 5px;
+    color: darkgreen;
+    width: 400px;
+    text-align: center; /* Center text inside */
+  }
+  .div-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ensure full width for centering */
+  }
+</style>
+<div class="main-div">
+  <div class="title-div">
+    <span style="color: firebrick;">We</span><span>Tech</span>
+  </div>
+  <div class="mess-div">
+    <p>We aspire each feedback and enhance ourselves!</p>
+  </div>
+
+  {{#if mess}}
+    <div class="mess-main-div">
+      <p style="font-size: 18px; font-weight: 600; padding-top:10px">{{mess}}</p>
+    </div>
+  {{/if}}
+
+  <div class="div-form" style="margin-top:30px">
+    <form class="feedback-form" action="/feedback" method="post">
+      <h2>Feedback Form</h2>
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" placeholder="Your Message" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>

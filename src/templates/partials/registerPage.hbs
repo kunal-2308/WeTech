@@ -1,0 +1,113 @@
+<style>
+  .registration-container { background-color: #ffffff; padding: 40px;
+  border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width:
+  420px; width: 100%; } .registration-form h2 { margin-bottom: 20px; color:
+  #333; font-size: 24px; font-weight: 600; text-align: center; }
+  .registration-form input[type="text"], .registration-form input[type="email"],
+  .registration-form input[type="password"], .registration-form
+  input[type="tel"] { width: 100%; padding: 12px; margin-bottom: 20px; border:
+  1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box;
+  transition: border-color 0.3s ease; } .registration-form
+  input[type="text"]:focus, .registration-form input[type="email"]:focus,
+  .registration-form input[type="password"]:focus, .registration-form
+  input[type="tel"]:focus { border-color: #5a67d8; outline: none; }
+  .registration-form button[type="submit"] { width: 100%; padding: 14px;
+  background-color: #5a67d8; border: none; border-radius: 8px; color: #ffffff;
+  font-size: 18px; cursor: pointer; transition: background-color 0.3s ease; }
+  .registration-form button[type="submit"]:hover { background-color: #4c51bf; }
+  .registration-form .form-group { margin-bottom: 20px; } .registration-form
+  .form-group label { display: block; margin-bottom: 5px; font-weight: 500;
+  color: #555; }
+</style>
+
+<div
+  class="main-div"
+  style="display: flex; justify-content:center;align-items:center;margin-top: 40px;"
+>
+  <div class="registration-container">
+    <form
+      class="registration-form"
+      action="/register"
+      method="post"
+      onsubmit="validateConfirm(event)"
+    >
+      <h2>User Registration</h2>
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your Name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Your Email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="contact">Contact Number</label>
+        <input
+          type="text"
+          id="contact"
+          name="contact"
+          placeholder="Your Contact Number"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Your Password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          placeholder="Confirm Your Password"
+          required
+        />
+      </div>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function validateConfirm(event) {
+    // Prevent the form from submitting
+    event.preventDefault();
+
+    // Get the values of the password fields
+    let password1 = document.querySelector('#password').value;
+    let password2 = document.querySelector('#confirm-password').value;
+
+    // Check if the passwords match
+    if (password1 !== password2) {
+      alert('Passwords do not match');
+    } else {
+      // If passwords match, submit the form
+      event.target.submit();
+    }
+  }
+</script>
