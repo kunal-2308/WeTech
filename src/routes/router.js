@@ -4,6 +4,7 @@ let router = new express.Router();
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cookieParser = require('cookie-parser');
+let auth = require('../middleware/auth');
 
 //PROCESS ENV'S : 
 let pepper = process.env.PEPPER;
@@ -75,11 +76,49 @@ router.get('/login',(req,res)=>{
 });
 
 
+router.post('/login',async(req,res)=>{
+    try {
+
+        let userLoginDetails = req.body;
+        let userLoginEmail = userLoginDetails.email;
+        let userLoginPassword = userLoginDetails.password;
+        
+        let dbPassword = await userCollection.findOne({"email":userLoginEmail},{password:1,_id:0});
+        let password = dbPassword.password;
+
+        if (!dbPassword) {
+            return res.status(400).send("User not found");
+        }
+
+        const pepperedPassword = userLoginPassword + pepper;
+
+        await bcrypt.compare(pepperedPassword, password);
+        
+        //creating a Web token :
+        let token =  jwt.sign(userLoginEmail,process.env.SECRET_KEY);
+        
+        // Creating a Cookie :
+        res.cookie('jwt_login',token,{
+            maxAge : tenDaysInMilliseconds,
+            httpOnly : true,
+        });
+
+        let Data = await userCollection.findOne({"email":userLoginEmail},{_id:0,name:1});
+        let userName = Data.name;
+        res.status(200).render('index',{loggedIn:true,name:userName});
+    
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+
  //-------------------------------------ROUTES WITH LOGIN REQUIRED-------------------------------------//
 
 
-router.get('/about',(req,res)=>{
-    res.status(200).send('i love you kunal');
+router.get('/about',auth,(req,res)=>{
+    let userEmail = req.email;
+    res.status(200).send(userEmail);
 });
 
 router.post('/feedback',async(req,res)=>{
@@ -109,37 +148,5 @@ router.get('/feedback',(req,res)=>{
 
 const tenDaysInMilliseconds = 10 * 24 * 60 * 60 * 1000;
 
-router.post('/login',async(req,res)=>{
-    try {
-
-        let userLoginDetails = req.body;
-        let userLoginEmail = userLoginDetails.email;
-        let userLoginPassword = userLoginDetails.password;
-        
-        let dbPassword = await userCollection.findOne({"email":userLoginEmail},{password:1,_id:0});
-        let password = dbPassword.password;
-
-        if (!dbPassword) {
-            return res.status(400).send("User not found");
-        }
-
-        const pepperedPassword = userLoginPassword + pepper;
-
-        await bcrypt.compare(pepperedPassword, password);
-        
-        //creating a Web token :
-        let token =  jwt.sign(userLoginEmail,process.env.SECRET_KEY);
-        
-        // Creating a Cookie :
-        res.cookie('jwt-login',token,{
-            maxAge : tenDaysInMilliseconds,
-            httpOnly : true,
-        });
-        
-        res.status(200).render('index');
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
 
 module.exports = router;

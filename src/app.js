@@ -5,12 +5,13 @@ let chalk = require('chalk');
 let PORT = process.env.PORT || 8000;
 let hbs = require('hbs');
 let path = require('path');
-let router = require('./routes/router')
-
+let router = require('./routes/router');
+let auth = require('../src/middleware/auth');
 
 //middlewares : 
 let app = express();
 app.use(router);
+
 
 //static Host :
 let staticPath = path.join(__dirname,'../src/templates/views');
