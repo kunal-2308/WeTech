@@ -2,6 +2,8 @@ require('dotenv').config();
 let express = require('express');
 let router = new express.Router();
 let bcrypt = require('bcrypt');
+let jwt = require('jsonwebtoken');
+let cookieParser = require('cookie-parser');
 
 //PROCESS ENV'S : 
 let pepper = process.env.PEPPER;
@@ -11,12 +13,14 @@ let feedbackCollection = require('../model/feedback');
 let userCollection = require('../model/user');
 
 //middlewares :
+router.use(cookieParser());
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
 
+ //-------------------------------------ROUTES WITH NO LOGIN REQUIRED-------------------------------------//
 
-// NO-LOGIN REQUIRED
+
 router.get('/',(req,res)=>{
     try {
         res.status(200).render('index');
@@ -25,12 +29,13 @@ router.get('/',(req,res)=>{
     }
 });
 
-// NO-LOGIN REQUIRED
+
 router.get('/register',(req,res)=>{
     res.status(200).render('register');
 });
 
-// NO-LOGIN REQUIRED
+
+
 router.post('/register',async(req,res)=>{
     try {
         let userData = req.body;
@@ -64,16 +69,19 @@ router.post('/register',async(req,res)=>{
    
 });
 
+
 router.get('/login',(req,res)=>{
     res.render('login');
 });
 
-// LOGIN - REQUIRED
+
+ //-------------------------------------ROUTES WITH LOGIN REQUIRED-------------------------------------//
+
+
 router.get('/about',(req,res)=>{
     res.status(200).send('i love you kunal');
 });
 
-// LOGIN - REQUIRED
 router.post('/feedback',async(req,res)=>{
     let userName = req.body.name;
     let userEmail = req.body.email;
@@ -94,9 +102,44 @@ router.post('/feedback',async(req,res)=>{
     }
 });
 
-// LOGIN - REQUIRED
+
 router.get('/feedback',(req,res)=>{
     res.status(200).render('feedback')
+});
+
+const tenDaysInMilliseconds = 10 * 24 * 60 * 60 * 1000;
+
+router.post('/login',async(req,res)=>{
+    try {
+
+        let userLoginDetails = req.body;
+        let userLoginEmail = userLoginDetails.email;
+        let userLoginPassword = userLoginDetails.password;
+        
+        let dbPassword = await userCollection.findOne({"email":userLoginEmail},{password:1,_id:0});
+        let password = dbPassword.password;
+
+        if (!dbPassword) {
+            return res.status(400).send("User not found");
+        }
+
+        const pepperedPassword = userLoginPassword + pepper;
+
+        await bcrypt.compare(pepperedPassword, password);
+        
+        //creating a Web token :
+        let token =  jwt.sign(userLoginEmail,process.env.SECRET_KEY);
+        
+        // Creating a Cookie :
+        res.cookie('jwt-login',token,{
+            maxAge : tenDaysInMilliseconds,
+            httpOnly : true,
+        });
+        
+        res.status(200).render('index');
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
 module.exports = router;
