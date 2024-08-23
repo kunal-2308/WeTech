@@ -22,13 +22,14 @@ router.use(express.urlencoded({extended:false}));
  //-------------------------------------ROUTES WITH NO LOGIN REQUIRED-------------------------------------//
 
 
-router.get('/',(req,res)=>{
-    try {
-        res.status(200).render('index');
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
+// router.get('/',(req,res)=>{
+//     try {
+//         res.status(200).render('index');
+//     } catch (error) {
+//         res.status(400).send(error);
+//     }
+// });
+
 
 
 router.get('/register',(req,res)=>{
@@ -75,6 +76,7 @@ router.get('/login',(req,res)=>{
     res.render('login');
 });
 
+const tenDaysInMilliseconds = 10 * 24 * 60 * 60 * 1000;
 
 router.post('/login',async(req,res)=>{
     try {
@@ -115,7 +117,19 @@ router.post('/login',async(req,res)=>{
 
  //-------------------------------------ROUTES WITH LOGIN REQUIRED-------------------------------------//
 
-
+router.get('/',auth,async(req,res)=>{
+   try {
+    let userEmail = req.email;
+    let userName = await userCollection.findOne({"email":userEmail},{_id:0,name:1});
+    if(!userName){
+        res.send(401).render('login');
+    }
+    let name = userName.name;
+        res.status(200).render('index',{loggedIn:true,name})
+   } catch (error) {
+        res.status(400).send('index');
+   }
+});
 router.get('/about',auth,(req,res)=>{
     let userEmail = req.email;
     res.status(200).send(userEmail);
@@ -146,7 +160,7 @@ router.get('/feedback',(req,res)=>{
     res.status(200).render('feedback')
 });
 
-const tenDaysInMilliseconds = 10 * 24 * 60 * 60 * 1000;
+
 
 
 module.exports = router;

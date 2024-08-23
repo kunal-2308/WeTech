@@ -6,7 +6,6 @@ let PORT = process.env.PORT || 8000;
 let hbs = require('hbs');
 let path = require('path');
 let router = require('./routes/router');
-let auth = require('../src/middleware/auth');
 
 //middlewares : 
 let app = express();

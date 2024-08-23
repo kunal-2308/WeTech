@@ -6,7 +6,7 @@ let auth = async(req, res, next) => {
       let token = req.cookies.jwt_login;
 
       if (!token) {
-         res.status(401).send("Login Again");
+         res.status(401).render("index");
       }
 
       let userEmail = jwt.verify(token, process.env.SECRET_KEY);
