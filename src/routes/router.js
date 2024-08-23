@@ -1,6 +1,6 @@
 require('dotenv').config();
 let express = require('express');
-let router = new express.Router();
+let router =  express.Router();
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 let cookieParser = require('cookie-parser');
@@ -21,22 +21,9 @@ router.use(express.urlencoded({extended:false}));
 
  //-------------------------------------ROUTES WITH NO LOGIN REQUIRED-------------------------------------//
 
-
-// router.get('/',(req,res)=>{
-//     try {
-//         res.status(200).render('index');
-//     } catch (error) {
-//         res.status(400).send(error);
-//     }
-// });
-
-
-
 router.get('/register',(req,res)=>{
     res.status(200).render('register');
 });
-
-
 
 router.post('/register',async(req,res)=>{
     try {
@@ -130,6 +117,7 @@ router.get('/',auth,async(req,res)=>{
         res.status(400).send('index');
    }
 });
+
 router.get('/about',auth,(req,res)=>{
     let userEmail = req.email;
     res.status(200).send(userEmail);
@@ -160,6 +148,27 @@ router.get('/feedback',(req,res)=>{
     res.status(200).render('feedback')
 });
 
+router.get('/logout',auth,async(req,res)=>{
+     try {
+        res.clearCookie('jwt_login');
+        res.status(200).render('index',{mess:"Logged out successfully"});
+     } catch (error) {
+        res.status(400).send(error);
+     }
+});
+
+
+
+//API TO FETCH DATA : 
+router.get('/getuser/:name',async(req,res)=>{
+   try {
+        let name = req.params.name;
+        let userData = await userCollection.findOne({name},{_id:0,name:1,email:1,contact:1});
+        res.status(200).json(userData);
+   } catch (error) {
+        res.status(400).send(error);
+   }
+});
 
 
 
