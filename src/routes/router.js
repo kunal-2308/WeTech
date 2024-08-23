@@ -157,6 +157,29 @@ router.get('/logout',auth,async(req,res)=>{
      }
 });
 
+router.post('/updateinfo',auth,async(req,res)=>{
+    try {
+        let updatedData = req.body;
+        let name = updatedData.contactName;
+        let email = updatedData.contactEmail;
+        let contact = updatedData.contactPhone;
+
+        let Id = await userCollection.findOne({email},{_id:1});
+        let userId = Id._id;
+
+      let NewData =  await userCollection.findByIdAndUpdate(userId,{name,email,contact},{new:true});
+      
+      let CookieEmail = req.email;
+     
+      if(CookieEmail===NewData.email){
+        res.status(200).render('index',{loggedIn:true,name:NewData.name,updateMess:true});
+      }
+      
+
+    } catch (error) {
+        res.status(400).send(error)
+    }
+});
 
 
 //API TO FETCH DATA : 
