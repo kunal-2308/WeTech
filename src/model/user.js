@@ -10,6 +10,7 @@ let userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
+        unique:true,
         required: true,
         trim: true,
         validate(value) {
@@ -39,6 +40,9 @@ let userSchema = new mongoose.Schema({
     }
 });
 //creating a collection for All Users :
+
+//this 3rd parameter i created manually by creating index of email which is unique 
+//check the commands on GPT how to create index on email for unique : true
 let userCollection = new mongoose.model('user',userSchema);
 
 module.exports = userCollection;

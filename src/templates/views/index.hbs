@@ -285,17 +285,10 @@
     </header>
 
     {{#if updateMess}}
-    <div class="div-alert-update-success"
-        style=" display:flex;justify-content:center;align-items:center;margin-top:40px;">
-        <div class="alert" role="alert"
-            style="width: 280px;background-color:white; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);display:flex;justify-content:space-evenly;align-items:center">
-            <span><i class="fa-solid fa-circle-check" style="color: #058a0e;"></i></span><span
-                style="color: black;margin-left:12px;font-weight:600">Data updated successfully</span>
-        </div>
-    </div>
+    {{>popupUpdate}}
     {{/if}}
 
-
+    
     {{!-- USER INFO MODAL --}}
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -328,6 +321,10 @@
                 <a href="/logout"><button type="button" class="btn"
                         style="background-color: brown;color:white;font-weight:500">Logout</button></a>
             </div>
+             <div class="button-div" style="display:flex;justify-content:center;align-items:center;margin-top:20px">
+           <button type="button" class="btn" id="deleteAccountButton"
+                        style="background-color: brown;color:white;font-weight:500">Delete Account</button>
+            </div>
         </div>
     </div>
 
@@ -342,11 +339,6 @@
                 <div class="form-group">
                     <label for="contactName">Name</label>
                     <input type="text" id="contactName" name="contactName" placeholder="Your Name" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="contactEmail">Email</label>
-                    <input type="email" id="contactEmail" name="contactEmail" placeholder="Your Email" required />
                 </div>
 
                 <div class="form-group">
@@ -405,13 +397,11 @@
         let updateButton = document.querySelector('#updateButton');
         let contactModalClose = document.querySelector('#contactModalClose');
         let nameInputValue = document.querySelector('#contactName');
-        let emailInputValue = document.querySelector('#contactEmail');
         let contactInputValue = document.querySelector('#contactPhone');
 
         updateButton.addEventListener('click', (e) => {
             modal2.style.display = 'block';
             nameInputValue.value = nameLabel.innerText;
-            emailInputValue.value = emailLabel.innerText;
             contactInputValue.value = contactLabel.innerText;
         });
 
@@ -429,6 +419,10 @@
                 divSuccess.style.display = 'none';
             }, 1200); 
         }, 600); 
+
+        // delete account :
+         
+
     </script>
 </body>
 
