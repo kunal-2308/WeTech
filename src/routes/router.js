@@ -21,7 +21,12 @@ router.use(express.urlencoded({ extended: false }));
 //-------------------------------------ROUTES WITH NO LOGIN REQUIRED-------------------------------------//
 
 router.get("/register", (req, res) => {
-  res.status(200).render("register");
+  try {
+    const message = req.query.message;
+    res.render('register', { message });
+  } catch (error) {
+    res.render('register');
+  }
 });
 
 router.post("/register", async (req, res) => {
@@ -207,28 +212,34 @@ router.get("/getuser/:name", async (req, res) => {
   }
 });
 
-router.delete("/deleteaccount", async (req, res) => {
+router.delete('/deleteuser',auth, async (req, res) => {
   try {
-    let email = req.email; // Assuming `email` is set from middleware
+      // Assuming you have the user's email stored in the session or request object
+      let email = req.email;
+      
+      let userId = await userCollection.findOne({ email }, { _id: 1 });
+      if (!userId) {
+          return res.status(404).send('User not found');
+      }
 
-    // Find user by email
-    let userId = await userCollection.findOne({ email }, { _id: 1 });
-    if (!userId) {
-      return res.status(404).send("User not found");
-    }
+      let _id = userId._id;
+      let deletedUser = await userCollection.findByIdAndDelete(_id);
 
-    // Delete user by ID
-    let _id = userId._id;
-    let deletedUser = await userCollection.findByIdAndDelete(_id);
+      if (!deletedUser) {
+          return res.status(404).send('User not found');
+      }
 
-    if (!deletedUser) {
-      return res.status(404).send("User not found");
-    }
+      // Clear the JWT cookie
+      res.clearCookie('jwt_login');
 
-    // Clear the session cookie and render the registration page
-    res.status(200).render("register", { accountDeleteStatus: true });
+      // Render the register page directly from the server
+      return res.status(200).json({  updateMess: 'Data deleted successfully' });
   } catch (error) {
-    res.status(400).send(error);
+      res.status(400).send(error);
   }
+
+
+
 });
+
 module.exports = router;

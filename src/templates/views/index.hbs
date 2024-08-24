@@ -288,7 +288,7 @@
     {{>popupUpdate}}
     {{/if}}
 
-    
+
     {{!-- USER INFO MODAL --}}
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -321,9 +321,9 @@
                 <a href="/logout"><button type="button" class="btn"
                         style="background-color: brown;color:white;font-weight:500">Logout</button></a>
             </div>
-             <div class="button-div" style="display:flex;justify-content:center;align-items:center;margin-top:20px">
-           <button type="button" class="btn" id="deleteAccountButton"
-                        style="background-color: brown;color:white;font-weight:500">Delete Account</button>
+            <div class="button-div" style="display:flex;justify-content:center;align-items:center;margin-top:20px">
+                <button type="button" class="btn" id="deleteAccountButton"
+                    style="background-color: brown;color:white;font-weight:500">Delete Account</button>
             </div>
         </div>
     </div>
@@ -414,14 +414,37 @@
 
         const divSuccess = document.querySelector('.alert');
         setTimeout(() => {
-            divSuccess.classList.add('fade-out'); 
+            divSuccess.classList.add('fade-out');
             setTimeout(() => {
                 divSuccess.style.display = 'none';
-            }, 1200); 
-        }, 600); 
+            }, 1200);
+        }, 600);
+
 
         // delete account :
-         
+        let deleteAccountButton = document.querySelector('#deleteAccountButton');
+        deleteAccountButton.addEventListener('click', async (e) => {
+            try {
+                e.preventDefault();
+                let baseUrl = '/deleteuser'
+                let response = await fetch(baseUrl, {
+                    method: 'DELETE',
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                   // Render the register page with the updateMess passed to it
+                    window.location.href = `/register?message=${encodeURIComponent(data.updateMess)}`;
+                } else {
+                    alert(data.message || 'Failed to delete account');
+                }
+            } catch (error) {
+                alert('An error occurred');
+            }
+        });
+
+
+
 
     </script>
 </body>
